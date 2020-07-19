@@ -35,3 +35,26 @@ void Sorter::selection_sort(int* array, int array_size) {
     }
     return;
 };
+
+/*
+Base idea:
+sorted_array(Array) = min(Array) + max(Array)                   if size(Array) = 2
+sorted_array(Array) = min(Array) + sorted(Array-min(Array))     if size(Array) > 2
+*/
+void Sorter::recursive_selection_sort(int* array, int array_size) {
+    if(array_size == 2) {
+        if (array[1] < array[0]) {
+            __swap(array, 0, 1);
+        } 
+        return;
+    } 
+    else {
+        // first element is min of array
+        int min = __min_in_array(array, array_size);
+        __swap(array, min, 0);
+
+        // rest of array is sorted array
+        recursive_selection_sort(array+1, array_size-1);
+        return;
+    }
+};

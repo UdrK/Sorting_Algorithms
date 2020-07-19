@@ -4,6 +4,7 @@
 class Sorter {
     public:
         void selection_sort(int*, int);
+        void recursive_selection_sort(int*, int);
         // void insertion_sort(int*, int);
         // void bubble_sort(int*, int);
         // void heap_sort(int* array, int array_size);

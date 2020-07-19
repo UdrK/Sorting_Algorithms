@@ -24,7 +24,7 @@ int main() {
 	print_array(array, array_size);
 
 	Sorter* s = new Sorter();
-	s->selection_sort(array, array_size);
-    
+	s->recursive_selection_sort(array, array_size);
+
 	print_array(array, array_size);
 }
