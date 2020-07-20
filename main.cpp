@@ -2,7 +2,8 @@
 #include <time.h>
 #include "Sorter.h"
 
-void print_array(int* array, int array_size) {
+template <typename T>
+void print_array(T* array, int array_size) {
 	for(int i=0; i < array_size; i++) {
 		std::cout<<array[i]<<" ";
 	}
@@ -24,7 +25,8 @@ int main() {
 	print_array(array, array_size);
 
 	Sorter<int>* s = new Sorter<int>();
-	s->quicksort(array, array_size);
+	std::cout<<"bubble_sort"<<std::endl;
+	s->merge_sort(array, array_size);
 
 	print_array(array, array_size);
 }

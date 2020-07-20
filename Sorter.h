@@ -6,12 +6,12 @@ class Sorter {
     public:
         void selection_sort(T*, int);
         void recursive_selection_sort(T*, int);
+        void insertion_sort(T*, int);
+        void bubble_sort(T*, int);
         void quicksort(T*, int);
-        // void insertion_sort(T*, int);
-        // void bubble_sort(T*, int);
-        // void heap_sort(T* array, int array_size);
-        // void merge_sort(T* array, int array_size);
-        // void sleep_sort(T* array, int array_size);
+        void merge_sort(T*, int);
+        // void heap_sort(T*, int);
+        // void sleep_sort(T*, int);
 };
 
 // PRIVATE -------------------------------------------------------------------
@@ -34,33 +34,88 @@ int __min_in_array(T* array, int array_size) {
 }
 
 template <class T>
-int __quicksort_partition(T* array, int b, int e) {
-    int pivot = array[e];
-    int i = b-1;
-    for(int j=b; j <= e-1; j++) {
+int __quicksort_partition(T* array, int start, int end) {
+    int pivot = array[end];
+    int i = start-1;
+    for(int j=start; j <= end-1; j++) {
         if(array[j] < pivot) {
             i+=1;
             __swap(array, i, j);
         }
     }
     i+=1;
-    __swap(array, i, e);
+    __swap(array, i, end);
     return i;
 }
 
 template <class T>
-void __quicksort(T* array, int b, int e) {
+void __quicksort(T* array, int start, int end) {
 
-    if(b < e) {
-       int q = __quicksort_partition(array, b, e);
-       __quicksort(array, b, q-1);
-       __quicksort(array, q+1, e);
+    if(start < end) {
+       int q = __quicksort_partition(array, start, end);
+       __quicksort(array, start, q-1);
+       __quicksort(array, q+1, end);
     }
 
 }
 
+template <class T>
+void __merge(T* array, int start, int middle, int end) {
+    int size_l = middle - start + 1;
+    int size_r = end - middle;
+    T left[size_l], right[size_r];
+
+    for(int i=0; i < size_l; i++)
+        left[i] = array[start + i];
+
+    for(int i=0; i < size_r; i++)
+        right[i] = array[middle + 1 + i];
+
+
+    int i=0, j=0, k = start;
+    while(i < size_l && j < size_r) {
+        if(left[i] <= right[j]) {
+            array[k] = left[i];
+            i++;
+        }
+        else {
+            array[k] = right[j];
+            j++;
+        }
+        k++;
+    }
+
+    while(i < size_l) {
+        array[k] = left[i];
+        i++;
+        k++;
+    }
+
+    while(j < size_r) {
+        array[k] = right[j];
+        j++;
+        k++;
+    }
+}
+
+template <class T>
+void __merge_sort(T* array, int start, int end) {
+
+    if(start < end) {
+       int middle = start + (end - start) / 2;
+       __merge_sort(array, start, middle);
+       __merge_sort(array, middle + 1, end);
+       __merge(array, start, middle, end);
+    }
+}
+
 // PUBLIC --------------------------------------------------------------------
 
+/*
+Best case: O(n^2)
+Worst case: O(n^2)
+Average case: O(n^2)
+*/
 template <class T>
 void Sorter<T>::selection_sort(T* array, int array_size) {
     int min = 0;
@@ -76,10 +131,10 @@ void Sorter<T>::selection_sort(T* array, int array_size) {
             __swap(array, min, i);
         }
     }
-    return;
 };
 
 /*
+Same complexity as iterative selection sort.
 Base idea:
 sorted_array(Array) = min(Array) + max(Array)                   if size(Array) = 2
 sorted_array(Array) = min(Array) + sorted(Array-min(Array))     if size(Array) > 2
@@ -103,10 +158,60 @@ void Sorter<T>::recursive_selection_sort(T* array, int array_size) {
     }
 };
 
-// Calls implementation based on Cormen's Introduction to Algorithm
+/*
+Best case: O(n)
+Worst case: O(n^2)
+Average case: O(n^2)
+*/
+template <class T>
+void Sorter<T>::insertion_sort(T* array, int array_size) {
+    for(int i=0; i < array_size; i++) {
+        for(int j=i; j > 0 && array[j-1] > array[j]; j--) {
+            __swap(array, j, j-1);
+        }
+    }
+}
+
+/*
+Best case: O(n)
+Worst case: O(n^2)
+Average case: O(n^2)
+*/
+template <class T>
+void Sorter<T>::bubble_sort(T* array, int array_size) {
+    int size_update;
+    while(array_size > 1) {
+        size_update = 0;
+        for(int i=1; i < array_size; i++) {
+            if(array[i-1] > array[i]) {
+                __swap(array, i-1, i);
+                size_update = i;
+            }
+        }
+        array_size = size_update;
+    }
+}
+
+/*
+Best case: O(n logn)
+Worst case: O(n^2)
+Average case: O(n logn)
+Wraps call to implementation based on Cormen's Introduction to algorithms, which needs starting and ending indeces
+*/
 template <class T>
 void Sorter<T>::quicksort(T* array, int array_size) {
     __quicksort(array, 0, array_size-1);
+}
+
+/*
+Best case: O(n logn)
+Worst case: O(n logn)
+Average case: O(n logn)
+Wraps call to implementation based on Cormen's Introduction to algorithms, which needs starting and ending indeces
+*/
+template <class T>
+void Sorter<T>::merge_sort(T* array, int array_size) {
+    __merge_sort(array, 0, array_size - 1);
 }
 
 #endif
