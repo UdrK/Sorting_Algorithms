@@ -23,8 +23,8 @@ int main() {
 	initialize_random_array(array, array_size, max_element);
 	print_array(array, array_size);
 
-	Sorter* s = new Sorter();
-	s->recursive_selection_sort(array, array_size);
+	Sorter<int>* s = new Sorter<int>();
+	s->quicksort(array, array_size);
 
 	print_array(array, array_size);
 }
