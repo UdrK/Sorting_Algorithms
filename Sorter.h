@@ -1,5 +1,6 @@
 #include <windows.h> 
 #include "ThreadsafeQueue.h"
+#include <iostream>
 
 #ifndef SORTER_H
 #define SORTER_H
@@ -13,8 +14,9 @@ class Sorter {
         void bubble_sort(T*, int);
         void quicksort(T*, int);
         void merge_sort(T*, int);
-        // void heap_sort(T*, int);
         void sleep_sort(int*, int);
+        void cutting_sort(int*, int);
+        
 };
 
 // PRIVATE -------------------------------------------------------------------
@@ -236,6 +238,8 @@ void Sorter<T>::merge_sort(T* array, int array_size) {
 }
 
 /*
+PRE-CONDITION: elements must be int >= 0
+SIMPLE-SOLUTION: new_array = min(array) + array[i] for i in range(0, len(array))
 Best case: O(max(array))
 Worst case: doesn't correctly sort the array
 The algorithm starts a thread for element in the array. Each thread sleeps 'array[i]' seconds. After sleeping
@@ -261,6 +265,36 @@ void Sorter<T>::sleep_sort(int* array, int array_size) {
 
     for(int i=0; threadsafe_q->size()>0; i++)
         array[i] = threadsafe_q->pop();
+}
+
+/*
+PRE-CONDITION: elements must be int >= 0
+SIMPLE-SOLUTION: new_array = min(array) + array[i] for i in range(0, len(array))
+Best case: O(n)
+Worst case: O(MAX_INT*n)
+Average case: O(max(array)*n)
+Inspired by sleep sort, this algorithm uses an increasing counter to determine the order of the elements:
+a counter 'c' starts from zero, and keeps increasing, when array[i] - c == 0, array[i] is pushed at the beginning of the array.
+*/
+template <class T>
+void Sorter<T>::cutting_sort(int* array, int array_size) {
+
+    int* array_copy = (int*) malloc (sizeof(int) * array_size);
+    for(int i=0; i<array_size; i++)
+        array_copy[i] = array[i];
+
+
+    int j=0, c=0;
+    while(j<array_size) {
+        for(int i=0; i<array_size; i++) {
+            if((array_copy[i] - c) == 0) {
+                array[j] = array_copy[i];
+                j++;
+            }
+        }
+        c++;
+    }
+    free(array_copy);
 }
 
 #endif

@@ -38,8 +38,8 @@ int main() {
 	print_array(array, array_size);
 
 	Sorter<int>* s = new Sorter<int>();
-	std::cout<<"sleep_sort"<<std::endl;
-	s->sleep_sort(array, array_size);
+	std::cout<<"cutting_sort"<<std::endl;
+	s->cutting_sort(array, array_size);
 
 	print_array(array, array_size);
 	free(array);
