@@ -1,3 +1,6 @@
+#include <windows.h> 
+#include "ThreadsafeQueue.h"
+
 #ifndef SORTER_H
 #define SORTER_H
 
@@ -11,7 +14,7 @@ class Sorter {
         void quicksort(T*, int);
         void merge_sort(T*, int);
         // void heap_sort(T*, int);
-        // void sleep_sort(T*, int);
+        void sleep_sort(int*, int);
 };
 
 // PRIVATE -------------------------------------------------------------------
@@ -107,6 +110,24 @@ void __merge_sort(T* array, int start, int end) {
        __merge_sort(array, middle + 1, end);
        __merge(array, start, middle, end);
     }
+}
+
+struct __sleep_parameters {
+    int* element;
+    ThreadsafeQueue<int>* queue;
+};
+
+DWORD __sleep(LPVOID parameters)
+{
+    __sleep_parameters* sleep_p = (__sleep_parameters*)parameters;
+
+    int val = *(sleep_p->element);
+
+    Sleep((int)val * 1000);
+
+    sleep_p->queue->push(val);
+
+    return 0;
 }
 
 // PUBLIC --------------------------------------------------------------------
@@ -212,6 +233,34 @@ Wraps call to implementation based on Cormen's Introduction to algorithms, which
 template <class T>
 void Sorter<T>::merge_sort(T* array, int array_size) {
     __merge_sort(array, 0, array_size - 1);
+}
+
+/*
+Best case: O(max(array))
+Worst case: doesn't correctly sort the array
+The algorithm starts a thread for element in the array. Each thread sleeps 'array[i]' seconds. After sleeping
+each array writes its 'array[i]' in a thread safe queue. In this way, the queue is filled in order.
+When array size is very large, some threads may end before each thread has started. 
+To avoid this, ideally every thread should start at the same time.
+*/
+template <class T>
+void Sorter<T>::sleep_sort(int* array, int array_size) {
+
+    HANDLE handles[array_size];
+    __sleep_parameters parameters[array_size];
+    ThreadsafeQueue<int>* threadsafe_q = new ThreadsafeQueue<int>();
+
+    for(int i = 0; i < array_size; i++)
+        parameters[i] = { &array[i], threadsafe_q };
+
+    for(int i = 0; i < array_size; i++)
+        handles[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)&__sleep, 
+                                  (LPVOID)&parameters[i], 0, NULL);
+
+    WaitForMultipleObjects(array_size, handles, 1, INFINITE);
+
+    for(int i=0; threadsafe_q->size()>0; i++)
+        array[i] = threadsafe_q->pop();
 }
 
 #endif
