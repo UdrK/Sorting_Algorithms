@@ -16,7 +16,6 @@ class Sorter {
         void merge_sort(T*, int);
         void sleep_sort(int*, int);
         void cutting_sort(int*, int);
-        
 };
 
 // PRIVATE -------------------------------------------------------------------
