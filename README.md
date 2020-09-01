@@ -18,4 +18,4 @@ Sleep sort generates a thread for each element in the array, and makes the threa
 and add the element to a thread-safe queue in order to return the ordered array once all threads have terminated. 
 
 ## What is cutting sort?
-Cutting sort is an idea of mine: it was inspired by sleep sort and what it does is use a counter, which starts from 0, and compare it with each element of the array. Those that match the counter will be pushed into the ordered list. The counter is increased by 1, and the cycle continues until the ordered list is completed.
+Cutting sort is an idea of mine: it was inspired by sleep sort and what it does is use a counter, which starts from 0, and compare it with each element of the array. Those that match the counter will be pushed into the ordered list. The counter is increased by 1, and the cycle continues until the ordered list is completed. I've called it cutting sort because i imagine the counter to be an axe, chopping away at the elements: when an element has been completely chopped it goes into the ordered list.
