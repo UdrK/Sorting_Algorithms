@@ -2,7 +2,16 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <list>
 #include "Sorter.h"
+
+template <typename T>
+void print_list(std::list<T> array) {
+    for (T n : array) {
+        std::cout << n << " ";
+    }
+	std::cout<<std::endl;
+}
 
 template <typename T>
 void print_array(T* array, int array_size) {
@@ -30,7 +39,7 @@ void time(int* array, int array_size) {
 }
 
 int main() {
-
+	
 	int array_size = 5;
 	int max_element = 12;
 	int* array = (int*) malloc (sizeof(int) * array_size);
@@ -38,9 +47,11 @@ int main() {
 	print_array(array, array_size);
 
 	Sorter<int>* s = new Sorter<int>();
-	std::cout<<"cutting_sort"<<std::endl;
-	s->cutting_sort(array, array_size);
+	std::cout<<"smart_stalin_sort"<<std::endl;
+	std::list<int> new_list = s->smart_stalin_sort(array, 0, 0, array_size);
 
-	print_array(array, array_size);
+	print_list(new_list);
+	//print_array(array, new_array_size);
 	free(array);
+
 }

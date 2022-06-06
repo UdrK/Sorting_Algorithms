@@ -1,6 +1,7 @@
 #include <windows.h> 
 #include "ThreadsafeQueue.h"
 #include <iostream>
+#include <list>
 
 #ifndef SORTER_H
 #define SORTER_H
@@ -16,9 +17,19 @@ class Sorter {
         void merge_sort(T*, int);
         void sleep_sort(int*, int);
         void cutting_sort(int*, int);
+        void cosmic_sort(T*, int);
+        int stalin_sort(T*, int);
+        std::list<T> smart_stalin_sort(T*, T, int, int);
 };
 
 // PRIVATE -------------------------------------------------------------------
+
+template <class T>
+void shift_array(T* array, int index, int array_size) {
+    for(int i=index; i<array_size-1; i++) {
+        array[i] = array[i+1];
+    }
+}
 
 template <class T>
 void __swap(T* array, int a, int b) {
@@ -295,5 +306,70 @@ void Sorter<T>::cutting_sort(int* array, int array_size) {
     }
     free(array_copy);
 }
+/*
+Best case: O(1) (go buy a lottery ticket)
+Worst case: ∞
+Average case: > Heat death of the universe
+Waits for cosmic rays to flip enough bits to order the array. More probably the bool variable in_order will be flipped before that happens
+*/
+template <class T>
+void Sorter<T>::cosmic_sort(T* array, int array_size) {
 
+    bool in_order = false;
+
+    while (!in_order) {
+        for(int i=0; i<array_size-1; i++) {
+            if(array[i]>array[i+1]) {
+                i=-1;
+            }
+        }
+        in_order = true;
+    }
+}
+
+/*
+Best case: O(n)
+Worst case: O(n)
+Average case: O(n)
+Orders the array by removing out of order elements
+*/
+template <class T>
+int Sorter<T>::stalin_sort(T* array, int array_size) {
+
+    for(int i=0; i<array_size-1; i++) {
+        if(array[i+1] < array[i]) {
+            shift_array(array, i+1, array_size);
+            array_size -= 1;
+            i -= 1;
+        }
+    }
+
+    return array_size;
+}
+
+/*
+Best case: ?
+Worst case: ?
+Average case: ?
+Similar to Stalin Sort but this one is smart. It removes the minimum number of elements from the array in order to have the longest ordered non-consecutive subsequence
+*/
+template <class T>
+std::list<T> Sorter<T>::smart_stalin_sort(T* array, T last_item, int index, int array_size) {
+    if (index == array_size - 1)
+        if (array[index] >= last_item)
+            return {array[index]};
+        else
+            return {};
+    else {
+        if (array[index] >= last_item) {
+            std::list<T> l1 = {array[index]};
+            l1.splice(l1.end(), smart_stalin_sort(array, array[index], index+1, array_size));
+            std::list<T> l2 = smart_stalin_sort(array, last_item, index+1, array_size);
+            if (l1.size() > l2.size())
+                return l1;
+            else return l2;
+        } else
+            return smart_stalin_sort(array, last_item, index+1, array_size);
+    }
+}
 #endif
